@@ -78,4 +78,13 @@ describe('loader', function () {
 		context.cacheable.should.have.callCount(1);
 		context.addDependency.should.have.callCount(1);
 	});
+
+	it('should resolve JS module file', function () {
+		context.query = '?path=test/json/objects.js';
+		loader.call(context, someSass)
+			.should.be.eql('$breakpoints:(portraitS:320px,portraitM:360px,portraitL:414px);\n$deepObject:(a:(b:c));\n\n$primary-color: #333;');
+
+		context.cacheable.should.have.callCount(1);
+		context.addDependency.should.have.callCount(1);
+	});
 });
