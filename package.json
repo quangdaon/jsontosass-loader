@@ -1,9 +1,7 @@
 {
   "name": "sass-json-loader",
-  "version": "1.0.0",
-  "author": {
-    "name": " @edwardirby"
-  },
+  "version": "1.0.1",
+  "author": "Quangdao Nguyen",
   "description": "jsonToSass loader module for webpack",
   "files": [
     "index.js"
@@ -20,11 +18,17 @@
     "should-sinon": "0.0.6",
     "sinon": "^4.4.9"
   },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/EdwardIrby/jsontosass-loader.git"
+    "url": "git+https://github.com/quangdaon/sass-json-loader.git"
   },
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/EdwardIrby/jsontosass-loader.git/issues"
-  }
+    "url": "https://github.com/quangdaon/sass-json-loader/issues"
+  },
+  "homepage": "https://github.com/quangdaon/sass-json-loader#readme"
 }
