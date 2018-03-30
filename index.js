@@ -1,52 +1,54 @@
-"use strict";
+'use strict';
 
-var loaderUtils = require("loader-utils");
-var fs = require('fs');
-var path = require("path");
-module.exports = function(content) {
-  var query = loaderUtils.parseQuery(this.query).path;
-  var queryString = JSON.stringify(query);
-  var varPath = queryString.replace(/["']/g, '');
-  this.cacheable();
-  var contentPath = path.resolve(varPath);
-  this.addDependency(contentPath);
-  var obj = JSON.parse(fs.readFileSync(contentPath, 'utf8'));
+const loaderUtils = require('loader-utils');
+const path = require('path');
+module.exports = function (content) {
+	this.cacheable();
 
+	const query = loaderUtils.getOptions(this).path;
+	const queryString = JSON.stringify(query);
+	const varPath = queryString.replace(/["']/g, '');
+	const contentPath = path.resolve(varPath);
 
-  function jsonToSassVars (obj, indent) {
-    // Make object root properties into sass variables
-    var sass = "";
-    for (var key in obj) {
-      sass += "$" + key + ":" + JSON.stringify(obj[key], null, indent) + ";\n";
-    }
+	this.addDependency(contentPath);
 
-    if (!sass) {
-      return sass
-    }
+	const obj = require(contentPath);
 
-    // Store string values (so they remain unaffected)
-    var storedStrings = [];
-    sass = sass.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, function (str) {
+	function jsonToSassVars(obj, indent) {
+		// Make object root properties into sass variables
+		let sassString = '';
 
-      var id = "___JTS" + storedStrings.length;
-      storedStrings.push({id: id, value: str});
-      return id;
-    });
+		Object.keys(obj).forEach(key => {
+			const val = JSON.stringify(obj[key], null, indent);
+			sassString += `$${key}:${val};\n`;
+		});
 
-    // Convert js lists and objects into sass lists and maps
-    sass = sass.replace(/[{\[]/g, "(").replace(/[}\]]/g, ")");
+		if (!sassString) {
+			return sassString;
+		}
 
-    // Put string values back (now that we're done converting)
-    storedStrings.forEach(function (str) {
-      str.value = str.value.replace(/["']/g, '');
-      sass = sass.replace(str.id, str.value);
-    });
+		// Store string values (so they remain unaffected)
+		const storedStrings = [];
+		sassString = sassString.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, function (str) {
 
-    return sass;
-  }
+			const id = '___JTS' + storedStrings.length;
+			storedStrings.push({ id: id, value: str });
+			return id;
+		});
 
+		// Convert js lists and objects into sass lists and maps
+		sassString = sassString.replace(/[{\[]/g, '(').replace(/[}\]]/g, ')');
 
-  var sass = jsonToSassVars(obj);
+		// Put string values back (now that we're done converting)
+		storedStrings.forEach(function (str) {
+			str.value = str.value.replace(/["']/g, '');
+			sassString = sassString.replace(str.id, str.value);
+		});
 
-  return sass ? sass + '\n' + content : content;
-}
+		return sassString;
+	}
+
+	const sass = jsonToSassVars(obj);
+
+	return sass ? sass + '\n' + content : content;
+};

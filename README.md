@@ -1,34 +1,37 @@
+Fork of [Edward Irby's](https://www.npmjs.com/~edwardirby) [jsontosass-loader](https://www.npmjs.com/package/jsontosass-loader)
+-------------------------------------------------------------------------------------------------------------------------------
 
-# NO LONGER SUPPORTED. IF YOU WOULD LIKE TO TAKE OVER THIS PACKAGE SEND ME A MESSAGE.
----
-# json to sass loader for webpack
-
-### 0.1.8 Changes
-- **Flagged as cacheable**
-- **Simpler implementation** (See Example Config)
-- **Marked dependencies** (triggers build on webpack watch and webpack-dev-server when vars file is changed)
-
+# JSON to Sass loader for Webpack
 
 ### Installation
 
-`npm install jsontosass-loader --save-dev`
+`npm install sass-json-loader --save-dev`
 
 ## Usage
 
-[Documentation: Using loaders](http://webpack.github.io/docs/using-loaders.html)
-
-### Example config
+Add this to loader after `sass-loader` in your Webpack configuration file:
 
 ``` javascript
 var sassVars = 'path/to/your/vars.json';
-var webpackConfig = {
-    module: {
-        loaders:[
-            {test: /.scss$/, loader: "style!css!sass!jsontosass?path="+ sassVars}
-        ]
-    },
-}
 
+module.exports = {
+    /* ... */
+    {
+        test: /\.scss$/,
+        loader: extractMain.extract({
+            fallback: 'vue-style-loader',
+            use: [
+                'css-loader',
+                'sass-loader',
+                {
+                    loader: 'sass-json-loader',
+                    options: { path: sassVars }
+                }
+            ]
+        })
+    },
+    /* ... */
+}
 ```
 
 **Input [YourVars.json file]**
